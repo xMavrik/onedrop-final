@@ -6,7 +6,7 @@ As per the stated requirements:
 
 An API must be created that sends back weather details. The tool must also cache recently searched locations and provide alerts when available.
  
-I decided to use Scala Play architecure during the creation process. This has libraires like playWebService (playWS) and scalaCache (Caffeine) that allowed me to quickly implement API querying and caching features.
+I decided to use Scala Play architecure during the creation process. It has libraires like playWebService (playWS) and scalaCache (Caffeine) that allowed me to quickly implement API querying and caching features.
  
 This is the overall code flow: 
   
