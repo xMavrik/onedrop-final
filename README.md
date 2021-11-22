@@ -12,7 +12,7 @@ As per requirement sheet
   
   ![alt text](https://user-images.githubusercontent.com/26445751/142803412-3afbaa93-d128-44cb-bab5-b72a5ae41f5c.png)
   
-  routes will begin at Homecontroller which will call for either city or zip code (or both), and begin to check the cache for each entry. Entries not in the cache are sent to the apiEventHandler where the WeatherAPI will finally be checked, the entry will be cached here too
+  Routes will begin at Homecontroller which will call for either city or zip code (or both), and begin to check the cache for each entry. Entries not in the cache are sent to the apiEventHandler where the WeatherAPI will finally be checked, the entry will be cached here too
   
   if entry doesnt exist, it will be queried from the api and cached
   
