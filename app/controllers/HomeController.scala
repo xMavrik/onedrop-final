@@ -88,7 +88,6 @@ class HomeController @Inject()(cacheSearchService: CacheSearchService, ws: WSCli
         )
 
         alertString = '"' + alertString + '"'
-        print(alertString)
 
         val outputString = s"""{ "lowestHumidity": $minHumidity, "highestHumidity": $maxHumidity, "lowestTemp": $minTemp, "highestTemp" : $maxTemp, "averageTemp": $tempAvg, "Alerts": $alertString  }"""
         Ok(Json.parse(outputString))
