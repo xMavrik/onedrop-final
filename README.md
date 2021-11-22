@@ -1,30 +1,50 @@
 # onedrop-final
 
+<b>INTRO</b> 
+--------------------------------------------------------------------------------------
 As per requirement sheet 
 
- 1. Accept a City or Zip code and provide the current weather and 7-day forecast
- 2. Accept a list of cities or zip codes and provides aggregate weather data for those zip codes (like average, min/max for temperature, humidity etc.)
- 3. Cache the data for 10 minutes.
- 4. Provide any alerts for the city or zip code you are querying
- 5. Both input and output should be in JSON format
+ Must create an API that sends back weather. Must cache recently searched locations. Must provide alerts when available.
+ 
+ I decided to use Scala Play architecure. It has libraires like playWebService(playWS) and scalaCache (Caffeine) that allowed me to quickly implement api querying and caching features.
+ 
+ This is the overall code flow 
+  
+  ![alt text](https://user-images.githubusercontent.com/26445751/142803412-3afbaa93-d128-44cb-bab5-b72a5ae41f5c.png)
+  
+  routes will begin at Homecontroller which will call for either city or zip code (or both), and begin to check the cache for each entry. Entries not in the cache are sent to the apiEventHandler where the WeatherAPI will finally be checked, the entry will be cached here too
+  
+  if entry doesnt exist, it will be queried from the api and cached
+  
+  ![alt text](https://user-images.githubusercontent.com/26445751/142804539-e5876057-8b84-4995-bddb-8a7840bc9e43.png)
+  
+  if entry already exists, it is pulled from cache, processed and sent back to controller to be Actioned out
+  
+  ![alt text](https://user-images.githubusercontent.com/26445751/142804669-2c4f2121-452b-43d7-90f2-62c9a6ec15cd.png)
+   
+   
+   This becomes very import when we are dealing with multiple cities searched at once. Given this payload
+    => [New York City, Boston, Charlotte, Los Angeles]
+    if NYC and Boston have been searched in the last 10 mintues, but Charlotte and LA have not, no problem. NYC and Boston will just be pulled from cache, while CLT and LA will be queried and added to the cache for 10 minutes. Also, if an incorrect city name is entered, it simlpy wont be included in the final payload, no need to reject the whole thing
+    ex: [N3w Y0rk C1t4, Boston, Charlotte, Los Angeles]
+  
+   
+  <b>Input/Output</b> 
+  --------------------------------------------------------------------------------------------- 
+  
+  a single city or zip search can be supported with a simple get request 
+  => GET     /weather/:input  controllers.HomeController.getWeather(input: String)
+  
+  This endpoint from the weatherService does it all, both current and 7 day weather, as well as any potential alerts, but it requires latitude and longitude coordinates 
 
-
-This endpoint from the weatherService does it all, both current and 7 day weather, as well as any potential alerts, but it requires latitude and longitude coordinates 
-
-https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}
+  https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}
 
 ![alt text](https://user-images.githubusercontent.com/26445751/142801901-e2097151-5205-4195-b660-1a02522fa861.png)
 
 
 To get around this, must make a call to Current Weather data
  => https://api.openweathermap.org/data/2.5/weather?q=NewYorkCity
-   this will give you ("lat":40.7143,"lon":-74.006) the same works for zip code, requirement 1 is complete
-   
-  For requirements (2, 3, 4, and 5) I implemented the following logic  
-  
-  a single city or zip search can be supported with a simple get request 
-  => GET     /weather/:input  controllers.HomeController.getWeather(input: String)
-  
+   this will give you ("lat":40.7143,"lon":-74.006) the same works for zip code
   
   for multi-city/zip I decided to expose a POST request and use the body to hold the json.
   could have potentially used GET, but it would not scale with many cities, url would be too long
@@ -36,23 +56,33 @@ To get around this, must make a call to Current Weather data
   
   I desinged the endpoint to accept both zip codes and cities in the same payload, seemed easier to use
   
-  This is the overall code flow 
-  
-  ![alt text](https://user-images.githubusercontent.com/26445751/142803412-3afbaa93-d128-44cb-bab5-b72a5ae41f5c.png)
-  
-  routes will begin at Homecontroller which will call for either city or zip code (or both)and begin to check the cache for each entry. Entries not in the cahce are sent to the apiEventHandler where the WeatherAPI will finally be checked, the entry will be cached here too
-  
-  if entry doesnt exist, it will be queried from the api and cached
-  
-  ![alt text](https://user-images.githubusercontent.com/26445751/142804539-e5876057-8b84-4995-bddb-8a7840bc9e43.png)
-  
-  if entry already exists, it is pulled from cache, processed and sent back to controller to be Actioned out
-  
-  ![alt text](https://user-images.githubusercontent.com/26445751/142804669-2c4f2121-452b-43d7-90f2-62c9a6ec15cd.png)
   
   
-  
- Final payload is as follows, aggregate data is high and low temp and humidity as well as average day temperature across all submitted cities/zip codes
+ Final payload is as follows, aggregate data is high and low temp and humidity as well as average day temperature across all submitted cities/zip codes.
  Alerts are tacked on as well, looks like California is having issues with high winds and fires at the moment
  
  {"lowestHumidity":16,"highestHumidity":92,"lowestTemp":37.85,"highestTemp":82.06,"averageTemp":59.02250000000001,"Alerts":"Los Angeles...WIND ADVISORY REMAINS IN EFFECT FROM 3 AM SUNDAY TO NOON PST\nMONDAY...\n* WHAT...Northeast winds 15 to 30 mph with gusts up to between\n40 and 50 mph expected.\n* WHERE...Ventura County Coast and Los Angeles County Coast\nincluding Downtown Los Angeles.\n* WHEN...From 3 AM Sunday to noon PST Monday.\n* IMPACTS...Gusty winds will blow around unsecured objects and\nmake driving difficult, especially for high profile vehicles.\nTree limbs could be blown down and a few power outages may\nresult. Roadways may be affected by gusty cross winds. This\nincludes the Pacific Coast Highway, the 110, 405 and 710\nfreeways in Los Angeles County, and Highway 101 in Ventura\nCounty."}
+ 
+    
+  <b>Testing</b>   
+  --------------------------------------------------------------------------------------------- 
+ 
+ 
+ Testing was done as well, single endpoint and multi-city POST end point were tested. Confirmed failures should failed and the successes look correct
+ 
+![alt text](https://user-images.githubusercontent.com/26445751/142805160-62965166-be07-4ca4-a5d3-17ede11ceaa3.png)
+
+
+ 
+  <b>Future Work</b> 
+  --------------------------------------------------------------------------------------------- 
+  
+  If I had more time on this I would implement the following
+  
+  -an optional UI page to display the weather data, maybe some graphs too
+  
+  -historical data support (ex: its currently July and you want to check historical temperatures for August)
+  
+  -better error handling (ex: if you accidentally submit N3w York City, try and find closest comparable city by string match percentage and return instead of error)
+  
+  
