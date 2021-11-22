@@ -32,34 +32,34 @@ Routes will begin at Homecontroller which will call for city, zip code, or both,
   <b>Input/Output</b> 
   --------------------------------------------------------------------------------------------- 
   
-  a single city or zip search can be supported with a simple get request 
+  A single city or zip search can be supported with a simple get request 
   => GET     /weather/:input  controllers.HomeController.getWeather(input: String)
   
-  This endpoint from the weatherService does it all, both current and 7 day weather, as well as any potential alerts, but it requires latitude and longitude coordinates 
+  This endpoint from the weatherService does it all, both current and 7 day weather, as well as any potential alerts, but it requires latitude and longitude coordinates. 
 
   https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}
 
 ![alt text](https://user-images.githubusercontent.com/26445751/142801901-e2097151-5205-4195-b660-1a02522fa861.png)
 
 
-To get around this, must make a call to Current Weather data
+To get around this, it must make a call to Current Weather data
  => https://api.openweathermap.org/data/2.5/weather?q=NewYorkCity
-   this will give you ("lat":40.7143,"lon":-74.006) the same works for zip code
+   this will give you ("lat":40.7143,"lon":-74.006) the same works for zip code.
   
-  for multi-city/zip I decided to expose a POST request and use the body to hold the json.
-  could have potentially used GET, but it would not scale with many cities, url would be too long
+  For multi-city/zip I decided to expose a POST request and use the body to hold the json.
+  I could have potentially used GET, but it would not scale with many cities, the URL would be too long.
   ex: /weather/[New York City, Boston, Charlotte, Los Angeles]
   
-  POST Request looks like this
+  POST Request looks like this:
   
   ![alt text](https://user-images.githubusercontent.com/26445751/142803947-7d9e4793-efce-4233-b23f-602f1f244347.png)
   
-  I desinged the endpoint to accept both zip codes and cities in the same payload, seemed easier to use
+  I designed the endpoint to accept both zip codes and cities in the same payload, seemed easier to use.
   
   
   
  Final payload is as follows, aggregate data is high and low temp and humidity as well as average day temperature across all submitted cities/zip codes.
- Alerts are tacked on as well, looks like California is having issues with high winds and fires at the moment
+ Alerts are tacked on as well, looks like California is having issues with high winds and fires at the moment.
  
  {"lowestHumidity":16,"highestHumidity":92,"lowestTemp":37.85,"highestTemp":82.06,"averageTemp":59.02250000000001,"Alerts":"Los Angeles...WIND ADVISORY REMAINS IN EFFECT FROM 3 AM SUNDAY TO NOON PST\nMONDAY...\n* WHAT...Northeast winds 15 to 30 mph with gusts up to between\n40 and 50 mph expected.\n* WHERE...Ventura County Coast and Los Angeles County Coast\nincluding Downtown Los Angeles.\n* WHEN...From 3 AM Sunday to noon PST Monday.\n* IMPACTS...Gusty winds will blow around unsecured objects and\nmake driving difficult, especially for high profile vehicles.\nTree limbs could be blown down and a few power outages may\nresult. Roadways may be affected by gusty cross winds. This\nincludes the Pacific Coast Highway, the 110, 405 and 710\nfreeways in Los Angeles County, and Highway 101 in Ventura\nCounty."}
  
@@ -68,7 +68,7 @@ To get around this, must make a call to Current Weather data
   --------------------------------------------------------------------------------------------- 
  
  
- Testing was done as well, single endpoint and multi-city POST end point were tested. Confirmed failures should failed and the successes look correct
+ Testing was done as well, single endpoint and multi-city POST end point were tested. Confirmed failures should failed and the successes look correct.
  
 ![alt text](https://user-images.githubusercontent.com/26445751/142805160-62965166-be07-4ca4-a5d3-17ede11ceaa3.png)
 
@@ -77,12 +77,12 @@ To get around this, must make a call to Current Weather data
   <b>Future Work</b> 
   --------------------------------------------------------------------------------------------- 
   
-  If I had more time on this I would implement the following
+  If I had more time on this I would implement the following:
   
-  -an optional UI page to display the weather data, maybe some graphs too
+  -an optional UI page to display the weather data, maybe some graphs too.
   
-  -historical data support (ex: its currently July and you want to check historical temperatures for August)
+  -historical data support. (ex: its currently July and you want to check historical temperatures for August)
   
-  -better error handling (ex: if you accidentally submit N3w York City, try and find closest comparable city by string match percentage and return instead of error)
+  -better error handling. (ex: if you accidentally submit N3w York City, try and find closest comparable city by string match percentage and return instead of error)
   
   
