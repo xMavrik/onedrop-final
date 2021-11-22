@@ -14,18 +14,18 @@ This is the overall code flow:
   
 Routes will begin at Homecontroller which will call for city, zip code, or both, as well as begin to check the cache for each entry. Entries not in the cache are sent to the apiEventHandler where the WeatherAPI will finally be checked. The entry will also be cached there.
   
-  if entry doesnt exist, it will be queried from the api and cached
+  If entry doesnt exist, it will be queried from the API and cached.
   
   ![alt text](https://user-images.githubusercontent.com/26445751/142804539-e5876057-8b84-4995-bddb-8a7840bc9e43.png)
   
-  if entry already exists, it is pulled from cache, processed and sent back to controller to be Actioned out
+  If entry already exists, it is pulled from cache, processed and sent back to controller to be Actioned out.
   
   ![alt text](https://user-images.githubusercontent.com/26445751/142804669-2c4f2121-452b-43d7-90f2-62c9a6ec15cd.png)
    
    
-   This becomes very import when we are dealing with multiple cities searched at once. Given this payload
+   This becomes very important when we are dealing with multiple cities searched at once. Given this payload:
     => [New York City, Boston, Charlotte, Los Angeles]
-    if NYC and Boston have been searched in the last 10 mintues, but Charlotte and LA have not, no problem. NYC and Boston will just be pulled from cache, while CLT and LA will be queried and added to the cache for 10 minutes. Also, if an incorrect city name is entered, it simlpy wont be included in the final payload, no need to reject the whole thing
+    If NYC and Boston have been searched in the last 10 mintues, but Charlotte and LA have not, no problem. NYC and Boston will just be pulled from cache, while CLT and LA will be queried and added to the cache for 10 minutes. Also, if an incorrect city name is entered, it simlpy won't be included in the final payload, no need to reject the whole thing.
     ex: [N3w Y0rk C1t4, Boston, Charlotte, Los Angeles]
   
    
