@@ -26,7 +26,6 @@ class apiEventHandler @Inject()(ws: WSClient, configuration: Configuration, city
 
     val apiPass: String = configuration.get[String]("play.http.secret.key")
     val request: WSRequest = ws.url(s"https://api.openweathermap.org/data/2.5/weather?q=$cityName&units=imperial&appid=$apiPass")
-    //println(request)
     val futureResult: Future[JsValue] = request.get().map { response =>
       response.json
     }
@@ -34,7 +33,6 @@ class apiEventHandler @Inject()(ws: WSClient, configuration: Configuration, city
     val json = Await.result(futureResult, 5 seconds)
 
     if((json \ "coord" \ "lat").isEmpty) {
-      println("this is about to break")
       throw new RuntimeException("Invalid City/Zip")
     }
 
@@ -47,9 +45,6 @@ class apiEventHandler @Inject()(ws: WSClient, configuration: Configuration, city
     }
 
     val jsonFinal: JsValue = Await.result(futureResultFinal, 2 seconds)
-
-    //println(jsonFinal)
-
     jsonFinal
   }
 
