@@ -8,11 +8,11 @@ An API must be created that sends back weather details. The tool must also cache
  
 I decided to use Scala Play architecure during the creation process. This has libraires like playWebService (playWS) and scalaCache (Caffeine) that allowed me to quickly implement API querying and caching features.
  
- This is the overall code flow 
+This is the overall code flow: 
   
   ![alt text](https://user-images.githubusercontent.com/26445751/142803412-3afbaa93-d128-44cb-bab5-b72a5ae41f5c.png)
   
-  Routes will begin at Homecontroller which will call for either city or zip code (or both), and begin to check the cache for each entry. Entries not in the cache are sent to the apiEventHandler where the WeatherAPI will finally be checked, the entry will be cached here too
+Routes will begin at Homecontroller which will call for city, zip code, or both, as well as begin to check the cache for each entry. Entries not in the cache are sent to the apiEventHandler where the WeatherAPI will finally be checked. The entry will also be cached there.
   
   if entry doesnt exist, it will be queried from the api and cached
   
